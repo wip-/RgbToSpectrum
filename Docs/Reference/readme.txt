@@ -1,1 +1,1 @@
-matlab files from Brian Smit http://www.cs.utah.edu/~bes/papers/color/
+matlab files from Brian Smits http://www.cs.utah.edu/~bes/papers/color/
