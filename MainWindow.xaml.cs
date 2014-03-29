@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Media;
-using Helpers;
+using WilCommon;
 
 namespace RgbToSpectrum
 {
@@ -16,6 +16,7 @@ namespace RgbToSpectrum
         {
             InitializeComponent();
             initialized = true;
+            Slider_ValueChanged(null, null);
         }
 
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -23,42 +24,22 @@ namespace RgbToSpectrum
             if (!initialized)
                 return;
 
-            byte R = SliderR.Value.ToByte();
-            byte G = SliderG.Value.ToByte();
-            byte B = SliderB.Value.ToByte();
+            var R = SliderR.Value;
+            var G = SliderG.Value;
+            var B = SliderB.Value;
 
             LabelR.Content = String.Format("R={0:000}", R);
             LabelG.Content = String.Format("G={0:000}", G);
             LabelB.Content = String.Format("B={0:000}", B);
 
             var brush = new SolidColorBrush();
-            brush.Color = Color.FromArgb(255, R, G, B);
+            brush.Color = Color.FromArgb(255, R.ToByte(), G.ToByte(), B.ToByte());
             Background = brush;
 
-            // TODO
+            SimpleSpectrum spectrum = new SimpleSpectrum( R / 255, G / 255, B / 255);
+            Image.Source = spectrum.ToBitmap().ToBitmapSource();
 
-            // spectrum = new Spectrum(R, G, B);
-            // bitmap = new SpectrumCurve(spectrum);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            // TODO more precision in RGBCYM spectra
         }
     }
 }

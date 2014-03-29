@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using MathNet.Numerics;
 using MathNet.Numerics.LinearAlgebra;
-using Helpers;
+using MathnetHelper;
 
 namespace RgbToSpectrum
 {

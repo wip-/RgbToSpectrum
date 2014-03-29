@@ -1,7 +1,8 @@
-﻿using System.Linq;
-using MathNet.Numerics;
-using MathNet.Numerics.LinearAlgebra;
-using Helpers;
+﻿using System;
+
+using System.Diagnostics;
+using System.Drawing;
+using WilCommon;
 
 namespace RgbToSpectrum
 {
@@ -18,12 +19,12 @@ namespace RgbToSpectrum
 
       //static readonly double[] Wspectrum = { 0.98750, 0.99554, 1.05714, 1.07589, 0.89643, 0.99554, 1.11607, 1.07857, 1.00089, 0.84286, 1.01964, 1.04643, 1.05179, 1.06250, 1.06518, 1.06518, 1.06250, 1.06518, 1.06786, 1.06786, 1.06518 };
         static readonly double[] Wspectrum = { 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000 };
-        
-        public double[] values;
+
+        public double[] values = new double[21];
 
 
         // R,  G,  B must be between [0,  1]
-        SimpleSpectrum(double r,  double g,  double b)
+        public SimpleSpectrum(double r,  double g,  double b)
         {
             double Rweigth = 0;
             double Gweigth = 0;
@@ -35,23 +36,96 @@ namespace RgbToSpectrum
 
             // TODO implement formula at bottom of http://www.cs.utah.edu/~bes/papers/color/paper-node2.html
 
-            //if( r <= g && r <= b)
-            //{
-            //    Wweigth = r;
-            //    if (r <= g && r <= b)
-            //    {
-            //        Cweigth = g - r;
-            //        Bweigth = b - g;
-            //    }
-            //    else
-            //    {
-            //        Cweigth = b - r;
-            //        Bweigth = g - b;
-            //    }
+            if( r <= g && g <= b )
+            {
+                Wweigth = r;
+                Cweigth = g - r;
+                Bweigth = b - g;
+            }
+            else if( r <= b && b <= g )
+            {
+                Wweigth = r;
+                Cweigth = b - r;
+                Gweigth = g - b;
+            }
+            else if( g <= r && r <= b )
+            {
+                Wweigth = g;
+                Mweigth = r - g;
+                Bweigth = b - r;
+            }
+            else if( g <= b && b <= r )
+            {
+                Wweigth = g;
+                Mweigth = b - g;
+                Rweigth = r - b;
+            }
+            else if( b <= r && r <= g )
+            {
+                Wweigth = b;
+                Yweigth = r - b;
+                Gweigth = g - r;
+            }
+            else if( b <= g && g <= r )
+            {
+                Wweigth = b;
+                Yweigth = g - b;
+                Rweigth = r - g;
+            }
+            else
+            {
+                Debugger.Break();
+            }
 
-            //}
-
-            //values = Rspectrum.Zip(Cspectrum, (x, y) => x + y).ToArray();
+            for(int i=0; i<21; ++i)
+            {
+                values[i] =
+                    Wweigth * Wspectrum[i] +
+                    Rweigth * Rspectrum[i] +
+                    Gweigth * Gspectrum[i] +
+                    Bweigth * Bspectrum[i] +
+                    Cweigth * Cspectrum[i] +
+                    Mweigth * Mspectrum[i] +
+                    Yweigth * Yspectrum[i];
+            }
         }
+
+        public Bitmap ToBitmap()
+        {
+            BitmapInfo bitmapInfo = new BitmapInfo(512, 512, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            // render white background
+            for(var x=0; x<512; ++x)
+            for(var y=0; y<512; ++y)
+                bitmapInfo.SetPixelColor(x, y, Color.White);
+
+            for(var i=0; i<21; ++i)
+            {
+                var s = values[i];
+                int yCurrent = (int)Helpers.Lerp(s, 0, 1, 508, 4);
+
+                for(var j=0; j<24; ++j)
+                {
+                    int x = 4 + 24 * i + j;
+                    bitmapInfo.SetPixelColor(x, yCurrent, Color.Black);
+                    if(j==23 && i!=20)
+                    {
+                        var sNext = values[i+1];
+                        int yNext = (int)Helpers.Lerp(sNext, 0, 1, 508, 4);
+                        int yStart = Math.Min(yCurrent, yNext);
+                        int yEnd = Math.Max(yCurrent, yNext);
+                        for (var y = yStart; y <= yEnd; ++y)
+                        {
+                            bitmapInfo.SetPixelColor(x, y, Color.Black);
+                        }
+                    }
+                }
+            }
+
+
+
+
+            return bitmapInfo.ToBitmap();
+        }
+
     }
 }
