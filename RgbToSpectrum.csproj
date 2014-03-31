@@ -58,8 +58,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Filter.cs" />
+    <Compile Include="FilteredSpectrum.cs" />
     <Compile Include="SimpleSpectrum.cs" />
     <Compile Include="Spectrum.cs" />
+    <Compile Include="XYZColor.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

@@ -8,7 +8,10 @@ namespace RgbToSpectrum
 {
     public class SimpleSpectrum
     {
-        // values read from brian smits paper curve images pixels - approximative for the least
+        // values read from Brian Smits paper curve images pixels - approximative for the least
+        static readonly int BinsCount = 21;
+        static readonly double[] Lambdas =   { 361.856, 383.505, 405.155, 426.804, 448.454, 470.103, 491.753, 513.402, 535.052, 556.701, 578.351, 600.000, 621.649, 643.299, 664.948, 686.598, 708.247, 729.897, 751.546, 773.196, 794.845 };
+
         static readonly double[] Rspectrum = { 0.09559, 0.09559, 0.08824, 0.07353, 0.00000, 0.00000, 0.00000, 0.00000, 0.00000, 0.08824, 0.69853, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000 };
         static readonly double[] Gspectrum = { 0.00000, 0.00000, 0.00000, 0.00000, 0.03676, 0.38971, 0.78676, 1.00000, 1.00000, 0.77941, 0.31618, 0.00735, 0.00000, 0.00000, 0.00000, 0.00000, 0.00000, 0.00000, 0.00000, 0.00000, 0.00000 };
         static readonly double[] Bspectrum = { 0.99265, 1.00000, 1.00000, 1.00000, 0.86765, 0.61029, 0.30882, 0.08088, 0.00000, 0.00000, 0.00000, 0.02941, 0.05147, 0.06618, 0.06618, 0.06618, 0.06618, 0.06618, 0.06618, 0.06618, 0.06618 };
@@ -20,8 +23,12 @@ namespace RgbToSpectrum
       //static readonly double[] Wspectrum = { 0.98750, 0.99554, 1.05714, 1.07589, 0.89643, 0.99554, 1.11607, 1.07857, 1.00089, 0.84286, 1.01964, 1.04643, 1.05179, 1.06250, 1.06518, 1.06518, 1.06250, 1.06518, 1.06786, 1.06786, 1.06518 };
         static readonly double[] Wspectrum = { 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000 };
 
-        public double[] values = new double[21];
+        public double[] values = new double[BinsCount];
 
+
+        public double LambdaMin  { get { return Lambdas[ 0]; } }
+        public double LambdaMax  { get { return Lambdas[BinsCount-1]; } }
+        public double LambdaStep { get { return Lambdas[1]-Lambdas[0]; } }
 
         // R,  G,  B must be between [0,  1]
         public SimpleSpectrum(double r,  double g,  double b)
@@ -77,7 +84,7 @@ namespace RgbToSpectrum
                 Debugger.Break();
             }
 
-            for(int i=0; i<21; ++i)
+            for(int i=0; i<BinsCount; ++i)
             {
                 values[i] =
                     Wweigth * Wspectrum[i] +
@@ -90,41 +97,24 @@ namespace RgbToSpectrum
             }
         }
 
+        public double Sample(double lambda)
+        {
+            // find closest smaller lambda
+            int i;
+            for (i = 0; i < BinsCount - 1; ++i)
+            {
+                if (Lambdas[i + 1] > lambda)
+                    break;
+            }
+            if (lambda >= Lambdas[BinsCount - 1])
+                i = BinsCount - 1;
+
+            return values[i];
+        }
+
         public Bitmap ToBitmap()
         {
-            BitmapInfo bitmapInfo = new BitmapInfo(512, 512, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            // render white background
-            for(var x=0; x<512; ++x)
-            for(var y=0; y<512; ++y)
-                bitmapInfo.SetPixelColor(x, y, Color.White);
-
-            for(var i=0; i<21; ++i)
-            {
-                var s = values[i];
-                int yCurrent = (int)Helpers.Lerp(s, 0, 1, 508, 4);
-
-                for(var j=0; j<24; ++j)
-                {
-                    int x = 4 + 24 * i + j;
-                    bitmapInfo.SetPixelColor(x, yCurrent, Color.Black);
-                    if(j==23 && i!=20)
-                    {
-                        var sNext = values[i+1];
-                        int yNext = (int)Helpers.Lerp(sNext, 0, 1, 508, 4);
-                        int yStart = Math.Min(yCurrent, yNext);
-                        int yEnd = Math.Max(yCurrent, yNext);
-                        for (var y = yStart; y <= yEnd; ++y)
-                        {
-                            bitmapInfo.SetPixelColor(x, y, Color.Black);
-                        }
-                    }
-                }
-            }
-
-
-
-
-            return bitmapInfo.ToBitmap();
+            return values.ToSnakeCurve(512).ToBitmap();
         }
 
     }
