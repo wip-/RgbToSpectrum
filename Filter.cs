@@ -40,7 +40,7 @@ namespace RgbToSpectrum
 
         public Bitmap ToBitmap()
         {
-            return Warming85.ToSnakeCurve(512).ToBitmap();
+            return Warming85.ToSnakeCurve(512, new Helpers.WavelengthRange { Start = LambdaMin, End = LambdaMax }).ToBitmap();
         }
 
     }

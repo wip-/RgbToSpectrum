@@ -114,7 +114,8 @@ namespace RgbToSpectrum
 
         public Bitmap ToBitmap()
         {
-            return values.ToSnakeCurve(512).ToBitmap();
+            return values.ToSnakeCurve(512, new Helpers.WavelengthRange { Start = LambdaMin, End = LambdaMax }).ToBitmap();
+
         }
 
     }

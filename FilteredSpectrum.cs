@@ -50,7 +50,7 @@ namespace RgbToSpectrum
 
         public Bitmap ToBitmap()
         {
-            return Values.ToArray().ToSnakeCurve(512).ToBitmap();
+            return Values.ToArray().ToSnakeCurve(512, new Helpers.WavelengthRange { Start = LambdaMin, End = LambdaMax }).ToBitmap();
         }
 
     }
