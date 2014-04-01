@@ -38,9 +38,12 @@ namespace RgbToSpectrum
         }
 
 
-        public Bitmap ToBitmap()
+        public Bitmap ToBitmap(bool spline)
         {
-            return Warming85.ToSnakeCurve(512, new Helpers.WavelengthRange { Start = LambdaMin, End = LambdaMax }).ToBitmap();
+            if( spline )
+                return Warming85.ToCatmullRomSpline(512, new Helpers.WavelengthRange { Start = LambdaMin, End = LambdaMax }).ToBitmap();
+            else
+                return Warming85.ToSnakeCurve(512, new Helpers.WavelengthRange { Start = LambdaMin, End = LambdaMax }).ToBitmap();
         }
 
     }

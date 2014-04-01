@@ -22,12 +22,19 @@ namespace RgbToSpectrum
             Custom
         }
 
+        public enum DisplayType : int
+        {
+            SnakeCurves,
+            CatmullRomSplines
+        }
 
         public MainWindow()
         {
             InitializeComponent();
             ComboBoxFilter.ItemsSource = Enum.GetValues(typeof(FilterType)).Cast<FilterType>();
             ComboBoxFilter.SelectedIndex = 0;
+            ComboBoxDisplay.ItemsSource = Enum.GetValues(typeof(DisplayType)).Cast<DisplayType>();
+            ComboBoxDisplay.SelectedIndex = 0;
 
             initialized = true;
 
@@ -44,6 +51,13 @@ namespace RgbToSpectrum
 
         private void ComboBoxFilter_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
+            UpdateFilter();
+            UpdateFilteredSpectrum();
+        }
+
+        private void ComboBoxDisplay_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            UpdateInputSpectrum();
             UpdateFilter();
             UpdateFilteredSpectrum();
         }
@@ -66,7 +80,7 @@ namespace RgbToSpectrum
             InputColorGrid.Background = brush;
 
             spectrum = new SimpleSpectrum(R / 255, G / 255, B / 255);
-            ImageInput.Source = spectrum.ToBitmap().ToBitmapSource();
+            ImageInput.Source = spectrum.ToBitmap(ComboBoxDisplay.SelectedIndex==(int)DisplayType.CatmullRomSplines).ToBitmapSource();
 
             // TODO more precision in RGBCYM spectra (lux render has data for 32 bins)
         }
@@ -77,7 +91,7 @@ namespace RgbToSpectrum
                 return;
 
             filter = new Filter();
-            ImageFilter.Source = filter.ToBitmap().ToBitmapSource();
+            ImageFilter.Source = filter.ToBitmap(ComboBoxDisplay.SelectedIndex == (int)DisplayType.CatmullRomSplines).ToBitmapSource();
         }
 
         void UpdateFilteredSpectrum()
@@ -86,7 +100,7 @@ namespace RgbToSpectrum
                 return;
 
             filtered = new FilteredSpectrum(spectrum, filter);
-            ImageOutput.Source = filtered.ToBitmap().ToBitmapSource();
+            ImageOutput.Source = filtered.ToBitmap(ComboBoxDisplay.SelectedIndex == (int)DisplayType.CatmullRomSplines).ToBitmapSource();
 
             XYZColor xyz = new XYZColor(filtered);
             System.Drawing.Color rgb = xyz.ToRGB();
@@ -98,5 +112,7 @@ namespace RgbToSpectrum
             LabelGout.Content = String.Format("G={0:000}", rgb.G);
             LabelBout.Content = String.Format("B={0:000}", rgb.B);
         }
+
+
     }
 }
