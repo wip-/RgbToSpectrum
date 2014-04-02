@@ -21,28 +21,43 @@
         </StackPanel>
             
         <Label Grid.Row="1" Grid.Column="0">Input Color</Label>
-        <UniformGrid Rows="3" Grid.Row="2" Grid.Column="0" Name="InputColorGrid" >
-            <Label Name="LabelRin">R=255</Label>
-            <Slider Name="SliderR" Minimum="0" Maximum="255" Value="255" ValueChanged="SliderInputColor_ValueChanged"/>
-            <Label Name="LabelGin">G=255</Label>
-            <Slider Name="SliderG" Minimum="0" Maximum="255" Value="255" ValueChanged="SliderInputColor_ValueChanged"/>
-            <Label Name="LabelBin">B=255</Label>
-            <Slider Name="SliderB" Minimum="0" Maximum="255" Value="255" ValueChanged="SliderInputColor_ValueChanged"/>
-        </UniformGrid>
+
+        <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Vertical" Name="InputColorGrid">
+            <StackPanel Orientation="Horizontal">
+                <Slider Name="SliderR" Minimum="0" Maximum="255" Value="255" Width="350" ValueChanged="SliderInputColor_ValueChanged"/>
+                <Label Name="LabelRin">R=255</Label>
+                <Label Name="LabelHin">H=0.0</Label>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <Slider Name="SliderG" Minimum="0" Maximum="255" Value="255" Width="350" ValueChanged="SliderInputColor_ValueChanged"/>
+                <Label Name="LabelGin">G=255</Label>
+                <Label Name="LabelSin">S=1.0</Label>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <Slider Name="SliderB" Minimum="0" Maximum="255" Value="255" Width="350" ValueChanged="SliderInputColor_ValueChanged"/>
+                <Label Name="LabelBin">B=255</Label>
+                <Label Name="LabelLin">B=0.0</Label>
+            </StackPanel>
+        </StackPanel>
+
         <Image Grid.Row="3" Grid.Column="0" Name="ImageInput" Stretch="None"/>
 
             
         <Label Grid.Row="1" Grid.Column="1">Filter</Label>
-        <ComboBox Grid.Row="2" Grid.Column="1" Name="ComboBoxFilter" Margin="30,30,20,20" SelectionChanged="ComboBoxFilter_SelectionChanged"/>
+        <ComboBox Grid.Row="2" Grid.Column="1" Name="ComboBoxFilter" 
+                  ItemsSource="{Binding Path=Filters}" DisplayMemberPath="Name" SelectedValue="{Binding SelectedFilter}"
+                  Margin="30,30,20,20" SelectionChanged="ComboBoxFilter_SelectionChanged"/>
         <!--TODO edit points-->
         <Image Grid.Row="3" Grid.Column="1" Name="ImageFilter" Stretch="None"/>
 
 
         <Label Grid.Row="1" Grid.Column="2">Output Color</Label>
-        <UniformGrid Rows="1" Grid.Row="2" Grid.Column="2" Name="OutputColorGrid" >
-            <Label Name="LabelRout">R=255</Label>
-            <Label Name="LabelGout">G=255</Label>
-            <Label Name="LabelBout">B=255</Label>
+        <UniformGrid Grid.Row="2" Grid.Column="2" Rows="3" Name="OutputColorGrid" >
+            <Label Name="LabelRout">R=255</Label><Label Name="LabelHout">H=0.0</Label>
+            <Label Name="LabelGout">G=255</Label><Label Name="LabelSout">S=1.0</Label>
+            <Label Name="LabelBout">B=255</Label><Label Name="LabelLout">B=1.0</Label>
         </UniformGrid>
         <Image Grid.Row="3" Grid.Column="2" Name="ImageOutput" Stretch="None"/>
         

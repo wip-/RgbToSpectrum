@@ -58,10 +58,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Filter.cs" />
+    <Compile Include="ConnectionViewModel.cs" />
+    <Compile Include="Filters\FixedFilter.cs" />
     <Compile Include="FilteredSpectrum.cs" />
+    <Compile Include="Filters\Filter.cs" />
+    <Compile Include="Filters\Identity.cs" />
     <Compile Include="SimpleSpectrum.cs" />
-    <Compile Include="Spectrum.cs" />
+    <Compile Include="ComplexSpectrum.cs" />
     <Compile Include="XYZColor.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

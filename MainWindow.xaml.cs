@@ -3,6 +3,9 @@ using System.Windows;
 using System.Windows.Media;
 using System.Linq;
 using WilCommon;
+using System.IO;
+using System.Drawing;
+using System.Diagnostics;
 
 namespace RgbToSpectrum
 {
@@ -11,16 +14,11 @@ namespace RgbToSpectrum
     /// </summary>
     public partial class MainWindow : Window
     {
+        ConnectionViewModel connectionViewModel = new ConnectionViewModel();
+        
         bool initialized = false;
         SimpleSpectrum spectrum;
-        Filter filter;
         FilteredSpectrum filtered;
-
-        public enum FilterType : int
-        {
-            Warming85,
-            Custom
-        }
 
         public enum DisplayType : int
         {
@@ -28,11 +26,55 @@ namespace RgbToSpectrum
             CatmullRomSplines
         }
 
+        /// <param name="fullFilename">full file path including extension</param>
+        void ConvertImage(String fullFilename, Filter filter)
+        {
+            FileStream fs = null;
+            try
+            {
+                fs = File.Open(fullFilename, FileMode.Open, FileAccess.Read, FileShare.None);
+                Bitmap bitmap　= new Bitmap(fs);
+                BitmapInfo colorsIn = new BitmapInfo(bitmap);
+                BitmapInfo colorsOut = new BitmapInfo(bitmap, BitmapInfo.CopyData.False);
+                fs.Close();
+
+                // TODO make parallel
+                for (var x = 0; x < colorsIn.Width; ++x )
+                for (var y = 0; y < colorsIn.Height; ++y)
+                {
+                    var colorIn = colorsIn.GetPixelColor(x, y);
+                    SimpleSpectrum spectrumIn = new SimpleSpectrum(
+                        colorIn.RNormalized(),
+                        colorIn.GNormalized(),
+                        colorIn.BNormalized());
+                    FilteredSpectrum spectrumOut = new FilteredSpectrum(spectrumIn, filter);
+                    XYZColor xyz = new XYZColor(spectrumOut);
+                    var colorOut = xyz.ToRGB();
+                    colorsOut.SetPixelColor(x, y, colorOut);
+                }
+
+                String newFileName = Path.GetDirectoryName(fullFilename) + @"\" + Path.GetFileNameWithoutExtension(fullFilename) + "-filtered" + Path.GetExtension(fullFilename);
+                colorsOut.ToBitmap().Save(newFileName);
+
+                Process.Start("explorer.exe", @"/select,""" + newFileName + "\"");
+            }
+            catch (System.Exception ex)
+            {
+                if (fs != null)
+                    fs.Close();
+                Helpers.MyCatch(ex);
+            }
+        }
+
+
+
         public MainWindow()
         {
+            //ConvertImage(@"..\..\Docs\Test Images\16Rx16Gx16B.png", new WarmingFilter85());
+
             InitializeComponent();
-            ComboBoxFilter.ItemsSource = Enum.GetValues(typeof(FilterType)).Cast<FilterType>();
-            ComboBoxFilter.SelectedIndex = 0;
+            DataContext = connectionViewModel;
+
             ComboBoxDisplay.ItemsSource = Enum.GetValues(typeof(DisplayType)).Cast<DisplayType>();
             ComboBoxDisplay.SelectedIndex = 0;
 
@@ -75,8 +117,13 @@ namespace RgbToSpectrum
             LabelGin.Content = String.Format("G={0:000}", G);
             LabelBin.Content = String.Format("B={0:000}", B);
 
+            var color = System.Drawing.Color.FromArgb(255, R.ToByte(), G.ToByte(), B.ToByte());
+            LabelHin.Content = String.Format("H={0:000}", color.GetHue());
+            LabelSin.Content = String.Format("S={0:0.000}", color.GetSaturation());
+            LabelLin.Content = String.Format("B={0:0.000}", color.GetBrightness());
+
             var brush = new SolidColorBrush();
-            brush.Color = Color.FromArgb(255, R.ToByte(), G.ToByte(), B.ToByte());
+            brush.Color = System.Windows.Media.Color.FromArgb(255, R.ToByte(), G.ToByte(), B.ToByte());
             InputColorGrid.Background = brush;
 
             spectrum = new SimpleSpectrum(R / 255, G / 255, B / 255);
@@ -90,27 +137,31 @@ namespace RgbToSpectrum
             if (!initialized)
                 return;
 
-            filter = new Filter();
-            ImageFilter.Source = filter.ToBitmap(ComboBoxDisplay.SelectedIndex == (int)DisplayType.CatmullRomSplines).ToBitmapSource();
+            //filter = new FixedFilter();
+            ImageFilter.Source = connectionViewModel.SelectedFilter.ToBitmap(ComboBoxDisplay.SelectedIndex == (int)DisplayType.CatmullRomSplines).ToBitmapSource();
         }
 
         void UpdateFilteredSpectrum()
         {
-            if (!initialized || filter==null || spectrum==null)
+            if (!initialized || connectionViewModel.SelectedFilter == null || spectrum == null)
                 return;
 
-            filtered = new FilteredSpectrum(spectrum, filter);
+            filtered = new FilteredSpectrum(spectrum, connectionViewModel.SelectedFilter);
             ImageOutput.Source = filtered.ToBitmap(ComboBoxDisplay.SelectedIndex == (int)DisplayType.CatmullRomSplines).ToBitmapSource();
 
             XYZColor xyz = new XYZColor(filtered);
             System.Drawing.Color rgb = xyz.ToRGB();
             var brush = new SolidColorBrush();
-            brush.Color = Color.FromArgb(rgb.A, rgb.R, rgb.G, rgb.B);
+            brush.Color = System.Windows.Media.Color.FromArgb(rgb.A, rgb.R, rgb.G, rgb.B);
             OutputColorGrid.Background = brush;
 
             LabelRout.Content = String.Format("R={0:000}", rgb.R);
             LabelGout.Content = String.Format("G={0:000}", rgb.G);
             LabelBout.Content = String.Format("B={0:000}", rgb.B);
+
+            LabelHout.Content = String.Format("H={0:000}", rgb.GetHue());
+            LabelSout.Content = String.Format("S={0:0.000}", rgb.GetSaturation());
+            LabelLout.Content = String.Format("B={0:0.000}", rgb.GetBrightness());
         }
 
 
