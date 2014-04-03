@@ -33,7 +33,7 @@ namespace RgbToSpectrum
             Y = 0;
             Z = 0;
 
-            for (double l = 380; l <= 780; l += LambdaStep)
+            for (double l = 360; l <= 800; l += LambdaStep)
             {
                 int index = SampleIndex(l);
                 double x = MatchingX[index];
@@ -51,24 +51,11 @@ namespace RgbToSpectrum
 
         public Color ToRGB()
         {
-            double sum = X + Y + Z;
-            double x = X / sum;
-            double y = Y / sum;
-            double z = Z / sum;
+            var xyz = Vector<double>.Build.DenseOfArray(new[] { X, Y, Z});
+            var rgb = ComplexSpectrum.XYZtoRGB * xyz;
 
-            //double r = +2.5623 * x + -1.1661 * y + -0.3962 * z;
-            //double g = -1.0215 * x + +1.9778 * y + +0.0437 * z;
-            //double b = +0.0752 * x + -0.2562 * y + +1.1810 * z;
-
-            double r = +3.2407100 * x + -1.537260 * y + -0.4985710 * z;
-            double g = -0.9692580 * x + +1.875990 * y + +0.0415557 * z;
-            double b = +0.0556352 * x + -0.203996 * y + +1.0570700 * z;
-
-            return Color.FromArgb(255, r.ScaleToByte(), g.ScaleToByte(), b.ScaleToByte());
+            return Color.FromArgb(255, rgb[0].ScaleToByte(), rgb[1].ScaleToByte(), rgb[2].ScaleToByte());
         }
-
-
-
 
 
         int SampleIndex(double lambda)

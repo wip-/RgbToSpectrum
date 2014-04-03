@@ -16,7 +16,8 @@ namespace RgbToSpectrum
         static MathNet.Numerics.Interpolation.IInterpolation interpY = Interpolate.LinearSpline(ls, riY);
         static MathNet.Numerics.Interpolation.IInterpolation interpZ = Interpolate.LinearSpline(ls, riZ);
 
-        static Matrix<double> XYZtoRGB = InitXYZtoRGB();
+        public static Matrix<double> RGBtoXYZ;
+        public static Matrix<double> XYZtoRGB;
 
         // R, G, B must be between [0, 1]
         ComplexSpectrum(double R, double G, double B, 
@@ -33,16 +34,21 @@ namespace RgbToSpectrum
 
             // TODO 
             //var spectrum = x + An * constr(ColorFunction, zeros, options);
-
-              
         }
 
-        static Matrix<double> InitXYZtoRGB()
+
+        static ComplexSpectrum()
+        {
+            RGBtoXYZ = InitRGBtoXYZ();
+            XYZtoRGB = RGBtoXYZ.Inverse();
+        }
+
+        static Matrix<double> InitRGBtoXYZ()
         {
             //double rx = .625, ry = .340;  //sony data
             //double gx = .280, gy = .595;
             //double bx = .155, by = .070;
-               
+
             //double rx = .600, ry = .350;  //less saturated version
             //double gx = .290, gy = .580;
             //double bx = .175, by = .090;
@@ -65,10 +71,10 @@ namespace RgbToSpectrum
             double wY = 106.8;  //should be the area under the XYZ curves, picked to make white = 1
 
             double Yovery = wY / wy;
-            double D =  (rx * (gy - by) + gx * (by - ry) + bx * (ry - gy));
-            double Cr = (Yovery  * (wx * (gy - by) - wy * (gx - bx) + gx * by - bx * gy) / D);
-            double Cg = (Yovery  * (wx * (by - ry) - wy * (bx - rx) + bx * ry - rx * by) / D);
-            double Cb = (Yovery  * (wx * (ry - gy) - wy * (rx - gx) + rx * gy - gx * ry) / D);
+            double D = (rx * (gy - by) + gx * (by - ry) + bx * (ry - gy));
+            double Cr = (Yovery * (wx * (gy - by) - wy * (gx - bx) + gx * by - bx * gy) / D);
+            double Cg = (Yovery * (wx * (by - ry) - wy * (bx - rx) + bx * ry - rx * by) / D);
+            double Cb = (Yovery * (wx * (ry - gy) - wy * (rx - gx) + rx * gy - gx * ry) / D);
 
             var toXYZ = Matrix<double>.Build.Dense(3, 3, new[]
             {
@@ -77,8 +83,9 @@ namespace RgbToSpectrum
                 bx * Cb, by * Cb, (1.0 - (bx + by)) * Cb 
             });
 
-            return toXYZ.Inverse();
+            return toXYZ;
         }
+
 
         Vector<double> GetXYZ(double lambda)
         {
