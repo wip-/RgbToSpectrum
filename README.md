@@ -1,4 +1,5 @@
 RgbToSpectrum
 =============
 
-A C# implementation of Brian Smits algorithm (TODO)
+A C# tool illustrating visually Brian Smits algorithm.  
+Also has an SPD filtering function.
