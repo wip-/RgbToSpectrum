@@ -31,6 +31,16 @@ namespace RgbToSpectrum
             } 
         }
 
+        public ColorSpectrumFilter()
+        {
+        }
+
+        // R,  G,  B must be between [0,  1]
+        public ColorSpectrumFilter(double r, double g, double b)
+        {
+            SetColor(r, g, b);
+        }
+
         public override double Sample(double lambda) 
         { 
             return spectrum.Sample(lambda); 
@@ -41,6 +51,7 @@ namespace RgbToSpectrum
             return spectrum.ToBitmap(spline);
         }
 
+        // R,  G,  B must be between [0,  1]
         public void SetColor(double r, double g, double b)
         {
             spectrum = new SimpleSpectrum(r, g, b);

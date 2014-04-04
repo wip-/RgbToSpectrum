@@ -38,7 +38,7 @@ namespace RgbToSpectrum
                 BitmapInfo colorsOut = new BitmapInfo(bitmap, BitmapInfo.CopyData.False);
                 fs.Close();
 
-                // TODO make parallel
+                // TODO make parallel, cache converted colors
                 for (var x = 0; x < colorsIn.Width; ++x )
                 for (var y = 0; y < colorsIn.Height; ++y)
                 {
@@ -71,6 +71,7 @@ namespace RgbToSpectrum
         public MainWindow()
         {
             //ConvertImage(@"..\..\Docs\Test Images\16Rx16Gx16B.png", new WarmingFilter85());
+            //ConvertImage(@"..\..\Docs\Test Images\16Rx16Gx16B.jpg", new ColorSpectrumFilter(1.0, 0.0, 0.0));
 
             InitializeComponent();
             DataContext = connectionViewModel;
@@ -143,7 +144,6 @@ namespace RgbToSpectrum
             if (!initialized)
                 return;
 
-            //filter = new FixedFilter();
             ImageFilter.Source = connectionViewModel.SelectedFilter.ToBitmap(ComboBoxDisplay.SelectedIndex == (int)DisplayType.CatmullRomSplines).ToBitmapSource();
         }
 
@@ -167,6 +167,10 @@ namespace RgbToSpectrum
                 LabelHfilter.Content = String.Format("H={0:000}", color.GetHue());
                 LabelSfilter.Content = String.Format("S={0:0.000}", color.GetSaturation());
                 LabelLfilter.Content = String.Format("B={0:0.000}", color.GetBrightness());
+
+                var brush = new SolidColorBrush();
+                brush.Color = System.Windows.Media.Color.FromArgb(255, R.ToByte(), G.ToByte(), B.ToByte());
+                FilterColorGrid.Background = brush;
 
                 filter.SetColor(R / 255, G / 255, B / 255);
                 UpdateFilter();
