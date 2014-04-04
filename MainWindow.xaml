@@ -1,12 +1,17 @@
 ﻿<Window x:Class="RgbToSpectrum.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:a="clr-namespace:RgbToSpectrum"
         Title="MainWindow" Height="760" Width="1600">
-    <Grid Background="LightGray">
+    <Window.Resources>
+        <a:ColorFilterParamsVisibilityConverter x:Key="ColorFilterParamsVisibilityConverter"  />  
+    </Window.Resources>
+    
+        <Grid Background="LightGray">
         <Grid.RowDefinitions>
             <RowDefinition Height ="60"/>
             <RowDefinition Height ="30"/>
-            <RowDefinition Height ="80"/>
+            <RowDefinition Height ="100"/>
             <RowDefinition Height ="520"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -24,19 +29,19 @@
 
         <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Vertical" Name="InputColorGrid">
             <StackPanel Orientation="Horizontal">
-                <Slider Name="SliderR" Minimum="0" Maximum="255" Value="255" Width="350" ValueChanged="SliderInputColor_ValueChanged"/>
+                <Slider Name="SliderInR" Minimum="0" Maximum="255" Value="255" Width="350" ValueChanged="SliderInputColor_ValueChanged"/>
                 <Label Name="LabelRin">R=255</Label>
                 <Label Name="LabelHin">H=0.0</Label>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal">
-                <Slider Name="SliderG" Minimum="0" Maximum="255" Value="255" Width="350" ValueChanged="SliderInputColor_ValueChanged"/>
+                <Slider Name="SliderInG" Minimum="0" Maximum="255" Value="255" Width="350" ValueChanged="SliderInputColor_ValueChanged"/>
                 <Label Name="LabelGin">G=255</Label>
                 <Label Name="LabelSin">S=1.0</Label>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal">
-                <Slider Name="SliderB" Minimum="0" Maximum="255" Value="255" Width="350" ValueChanged="SliderInputColor_ValueChanged"/>
+                <Slider Name="SliderInB" Minimum="0" Maximum="255" Value="255" Width="350" ValueChanged="SliderInputColor_ValueChanged"/>
                 <Label Name="LabelBin">B=255</Label>
                 <Label Name="LabelLin">B=0.0</Label>
             </StackPanel>
@@ -46,10 +51,40 @@
 
             
         <Label Grid.Row="1" Grid.Column="1">Filter</Label>
-        <ComboBox Grid.Row="2" Grid.Column="1" Name="ComboBoxFilter" 
+        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Vertical">           
+            <ComboBox Name="ComboBoxFilter" 
                   ItemsSource="{Binding Path=Filters}" DisplayMemberPath="Name" SelectedValue="{Binding SelectedFilter}"
-                  Margin="30,30,20,20" SelectionChanged="ComboBoxFilter_SelectionChanged"/>
-        <!--TODO edit points-->
+                  SelectionChanged="ComboBoxFilter_SelectionChanged"/>
+
+                <StackPanel Orientation="Vertical" Name="FilterColorGrid">
+                    <StackPanel.Visibility>
+                    <Binding ElementName="ComboBoxFilter" Path="SelectedValue" Converter="{StaticResource ColorFilterParamsVisibilityConverter}" Mode="OneWay"/>
+                    </StackPanel.Visibility>
+                    
+                <StackPanel Orientation="Horizontal">
+                    <Slider Name="SliderFilterR" Minimum="0" Maximum="255" Value="255" Width="350" ValueChanged="SliderFilterColor_ValueChanged"/>
+                    <Label Name="LabelRfilter">R=255</Label>
+                    <Label Name="LabelHfilter">H=0.0</Label>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <Slider Name="SliderFilterG" Minimum="0" Maximum="255" Value="255" Width="350" ValueChanged="SliderFilterColor_ValueChanged"/>
+                    <Label Name="LabelGfilter">G=255</Label>
+                    <Label Name="LabelSfilter">S=1.0</Label>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <Slider Name="SliderFilterB" Minimum="0" Maximum="255" Value="255" Width="350" ValueChanged="SliderFilterColor_ValueChanged"/>
+                    <Label Name="LabelBfilter">B=255</Label>
+                    <Label Name="LabelLfilter">B=0.0</Label>
+                </StackPanel>
+            </StackPanel>
+            <!--TODO edit points UI-->
+        </StackPanel>
+        
+        
+        
+        
         <Image Grid.Row="3" Grid.Column="1" Name="ImageFilter" Stretch="None"/>
 
 

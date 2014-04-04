@@ -59,6 +59,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ConnectionViewModel.cs" />
+    <Compile Include="Filters\ColorSpectrumFilter.cs" />
     <Compile Include="Filters\FixedFilter.cs" />
     <Compile Include="FilteredSpectrum.cs" />
     <Compile Include="Filters\Filter.cs" />

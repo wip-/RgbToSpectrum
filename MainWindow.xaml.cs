@@ -91,6 +91,12 @@ namespace RgbToSpectrum
             UpdateFilteredSpectrum();
         }
 
+        private void SliderFilterColor_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            UpdateFilterColor();
+            UpdateFilteredSpectrum();
+        }
+
         private void ComboBoxFilter_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             UpdateFilter();
@@ -109,9 +115,9 @@ namespace RgbToSpectrum
             if (!initialized)
                 return;
 
-            var R = SliderR.Value;
-            var G = SliderG.Value;
-            var B = SliderB.Value;
+            var R = SliderInR.Value;
+            var G = SliderInG.Value;
+            var B = SliderInB.Value;
 
             LabelRin.Content = String.Format("R={0:000}", R);
             LabelGin.Content = String.Format("G={0:000}", G);
@@ -141,6 +147,32 @@ namespace RgbToSpectrum
             ImageFilter.Source = connectionViewModel.SelectedFilter.ToBitmap(ComboBoxDisplay.SelectedIndex == (int)DisplayType.CatmullRomSplines).ToBitmapSource();
         }
 
+        void UpdateFilterColor()
+        {
+            if (!initialized)
+                return;
+
+            ColorSpectrumFilter filter = connectionViewModel.SelectedFilter as ColorSpectrumFilter;
+            if (filter != null)
+            {
+                var R = SliderFilterR.Value;
+                var G = SliderFilterG.Value;
+                var B = SliderFilterB.Value;
+
+                LabelRfilter.Content = String.Format("R={0:000}", R);
+                LabelGfilter.Content = String.Format("G={0:000}", G);
+                LabelBfilter.Content = String.Format("B={0:000}", B);
+
+                var color = System.Drawing.Color.FromArgb(255, R.ToByte(), G.ToByte(), B.ToByte());
+                LabelHfilter.Content = String.Format("H={0:000}", color.GetHue());
+                LabelSfilter.Content = String.Format("S={0:0.000}", color.GetSaturation());
+                LabelLfilter.Content = String.Format("B={0:0.000}", color.GetBrightness());
+
+                filter.SetColor(R / 255, G / 255, B / 255);
+                UpdateFilter();
+            }
+        }
+
         void UpdateFilteredSpectrum()
         {
             if (!initialized || connectionViewModel.SelectedFilter == null || spectrum == null)
@@ -163,6 +195,8 @@ namespace RgbToSpectrum
             LabelSout.Content = String.Format("S={0:0.000}", rgb.GetSaturation());
             LabelLout.Content = String.Format("B={0:0.000}", rgb.GetBrightness());
         }
+
+
 
 
     }
