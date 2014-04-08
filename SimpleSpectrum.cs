@@ -33,51 +33,51 @@ namespace RgbToSpectrum
         // R,  G,  B must be between [0,  1]
         public SimpleSpectrum(double r,  double g,  double b)
         {
-            double Rweigth = 0;
-            double Gweigth = 0;
-            double Bweigth = 0;
-            double Cweigth = 0;
-            double Mweigth = 0;
-            double Yweigth = 0;
-            double Wweigth = 0;
+            double Rweight = 0;
+            double Gweight = 0;
+            double Bweight = 0;
+            double Cweight = 0;
+            double Mweight = 0;
+            double Yweight = 0;
+            double Wweight = 0;
 
             // TODO implement formula at bottom of http://www.cs.utah.edu/~bes/papers/color/paper-node2.html
 
             if( r <= g && g <= b )
             {
-                Wweigth = r;
-                Cweigth = g - r;
-                Bweigth = b - g;
+                Wweight = r;
+                Cweight = g - r;
+                Bweight = b - g;
             }
             else if( r <= b && b <= g )
             {
-                Wweigth = r;
-                Cweigth = b - r;
-                Gweigth = g - b;
+                Wweight = r;
+                Cweight = b - r;
+                Gweight = g - b;
             }
             else if( g <= r && r <= b )
             {
-                Wweigth = g;
-                Mweigth = r - g;
-                Bweigth = b - r;
+                Wweight = g;
+                Mweight = r - g;
+                Bweight = b - r;
             }
             else if( g <= b && b <= r )
             {
-                Wweigth = g;
-                Mweigth = b - g;
-                Rweigth = r - b;
+                Wweight = g;
+                Mweight = b - g;
+                Rweight = r - b;
             }
             else if( b <= r && r <= g )
             {
-                Wweigth = b;
-                Yweigth = r - b;
-                Gweigth = g - r;
+                Wweight = b;
+                Yweight = r - b;
+                Gweight = g - r;
             }
             else if( b <= g && g <= r )
             {
-                Wweigth = b;
-                Yweigth = g - b;
-                Rweigth = r - g;
+                Wweight = b;
+                Yweight = g - b;
+                Rweight = r - g;
             }
             else
             {
@@ -87,13 +87,13 @@ namespace RgbToSpectrum
             for(int i=0; i<BinsCount; ++i)
             {
                 values[i] =
-                    Wweigth * Wspectrum[i] +
-                    Rweigth * Rspectrum[i] +
-                    Gweigth * Gspectrum[i] +
-                    Bweigth * Bspectrum[i] +
-                    Cweigth * Cspectrum[i] +
-                    Mweigth * Mspectrum[i] +
-                    Yweigth * Yspectrum[i];
+                    Wweight * Wspectrum[i] +
+                    Rweight * Rspectrum[i] +
+                    Gweight * Gspectrum[i] +
+                    Bweight * Bspectrum[i] +
+                    Cweight * Cspectrum[i] +
+                    Mweight * Mspectrum[i] +
+                    Yweight * Yspectrum[i];
             }
         }
 

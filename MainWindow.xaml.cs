@@ -71,7 +71,8 @@ namespace RgbToSpectrum
         public MainWindow()
         {
             //ConvertImage(@"..\..\Docs\Test Images\16Rx16Gx16B.png", new WarmingFilter85());
-            //ConvertImage(@"..\..\Docs\Test Images\16Rx16Gx16B.jpg", new ColorSpectrumFilter(1.0, 0.0, 0.0));
+            //ConvertImage(@"..\..\Docs\Test Images\16Rx16Gx16B.png", new ColorSpectrumFilter(1.0, 0.0, 0.0));
+            //ConvertImage(@"..\..\Docs\Test Images\16Rx16Gx16B.png", new ColorSpectrumFilter(0.9255, 0.54117, 0.0));
 
             InitializeComponent();
             DataContext = connectionViewModel;
