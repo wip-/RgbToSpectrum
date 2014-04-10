@@ -1,11 +1,12 @@
-﻿using System;
-
+﻿
 using System.Diagnostics;
 using System.Drawing;
 using WilCommon;
 
 namespace RgbToSpectrum
 {
+    public enum Primary : int { R, G, B, C, M, Y, W, Count }
+
     public class SimpleSpectrum
     {
         // values read from Brian Smits paper curve images pixels - approximative for the least
@@ -23,12 +24,25 @@ namespace RgbToSpectrum
       //static readonly double[] Wspectrum = { 0.98750, 0.99554, 1.05714, 1.07589, 0.89643, 0.99554, 1.11607, 1.07857, 1.00089, 0.84286, 1.01964, 1.04643, 1.05179, 1.06250, 1.06518, 1.06518, 1.06250, 1.06518, 1.06786, 1.06786, 1.06518 };
         static readonly double[] Wspectrum = { 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000 };
 
+        public static double SamplePrimarySpectrum(Primary primary, int index)
+        {
+            double[][] Spectra = new double[7][] { Rspectrum, Gspectrum, Bspectrum, Cspectrum, Mspectrum, Yspectrum, Wspectrum };
+            return Spectra[(int)primary][index];
+        }
+
         public double[] values = new double[BinsCount];
 
+        //public double Rweight { get; private set; }
+        //public double Gweight { get; private set; }
+        //public double Bweight { get; private set; }
+        //public double Cweight { get; private set; }
+        //public double Mweight { get; private set; }
+        //public double Yweight { get; private set; }
+        //public double Wweight { get; private set; }
 
-        public double LambdaMin  { get { return Lambdas[ 0]; } }
-        public double LambdaMax  { get { return Lambdas[BinsCount-1]; } }
-        public double LambdaStep { get { return Lambdas[1]-Lambdas[0]; } }
+        public static double LambdaMin  { get { return Lambdas[ 0]; } }
+        public static double LambdaMax  { get { return Lambdas[BinsCount-1]; } }
+        public static double LambdaStep { get { return Lambdas[1]-Lambdas[0]; } }
 
         // R,  G,  B must be between [0,  1]
         public SimpleSpectrum(double r,  double g,  double b)
@@ -40,8 +54,6 @@ namespace RgbToSpectrum
             double Mweight = 0;
             double Yweight = 0;
             double Wweight = 0;
-
-            // TODO implement formula at bottom of http://www.cs.utah.edu/~bes/papers/color/paper-node2.html
 
             if( r <= g && g <= b )
             {

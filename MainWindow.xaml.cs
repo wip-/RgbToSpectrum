@@ -1,11 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media;
-using System.Linq;
 using WilCommon;
-using System.IO;
-using System.Drawing;
-using System.Diagnostics;
 
 namespace RgbToSpectrum
 {
@@ -26,53 +23,12 @@ namespace RgbToSpectrum
             CatmullRomSplines
         }
 
-        /// <param name="fullFilename">full file path including extension</param>
-        void ConvertImage(String fullFilename, Filter filter)
-        {
-            FileStream fs = null;
-            try
-            {
-                fs = File.Open(fullFilename, FileMode.Open, FileAccess.Read, FileShare.None);
-                Bitmap bitmap　= new Bitmap(fs);
-                BitmapInfo colorsIn = new BitmapInfo(bitmap);
-                BitmapInfo colorsOut = new BitmapInfo(bitmap, BitmapInfo.CopyData.False);
-                fs.Close();
-
-                // TODO make parallel, cache converted colors
-                for (var x = 0; x < colorsIn.Width; ++x )
-                for (var y = 0; y < colorsIn.Height; ++y)
-                {
-                    var colorIn = colorsIn.GetPixelColor(x, y);
-                    SimpleSpectrum spectrumIn = new SimpleSpectrum(
-                        colorIn.RNormalized(),
-                        colorIn.GNormalized(),
-                        colorIn.BNormalized());
-                    FilteredSpectrum spectrumOut = new FilteredSpectrum(spectrumIn, filter);
-                    XYZColor xyz = new XYZColor(spectrumOut);
-                    var colorOut = xyz.ToRGB();
-                    colorsOut.SetPixelColor(x, y, colorOut);
-                }
-
-                String newFileName = Path.GetDirectoryName(fullFilename) + @"\" + Path.GetFileNameWithoutExtension(fullFilename) + "-filtered" + Path.GetExtension(fullFilename);
-                colorsOut.ToBitmap().Save(newFileName);
-
-                Process.Start("explorer.exe", @"/select,""" + newFileName + "\"");
-            }
-            catch (System.Exception ex)
-            {
-                if (fs != null)
-                    fs.Close();
-                Helpers.MyCatch(ex);
-            }
-        }
-
-
-
         public MainWindow()
         {
-            //ConvertImage(@"..\..\Docs\Test Images\16Rx16Gx16B.png", new WarmingFilter85());
-            //ConvertImage(@"..\..\Docs\Test Images\16Rx16Gx16B.png", new ColorSpectrumFilter(1.0, 0.0, 0.0));
-            //ConvertImage(@"..\..\Docs\Test Images\16Rx16Gx16B.png", new ColorSpectrumFilter(0.9255, 0.54117, 0.0));
+            //Utilities.ConvertImage(@"..\..\Docs\Test Images\16Rx16Gx16B.png", new WarmingFilter85());
+            //Utilities.ConvertImage(@"..\..\Docs\Test Images\16Rx16Gx16B.png", new ColorSpectrumFilter(1.0, 0.0, 0.0));
+            //Utilities.ConvertImage(@"..\..\Docs\Test Images\16Rx16Gx16B.png", new ColorSpectrumFilter(0.9255, 0.54117, 0.0));
+            //Utilities.PrecomputeCoefficients();
 
             InitializeComponent();
             DataContext = connectionViewModel;

@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using WilCommon;
-using System.Reflection;
-using System.Diagnostics;
-using System.Windows.Data;
 using System.Globalization;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Data;
 
 namespace RgbToSpectrum
 {

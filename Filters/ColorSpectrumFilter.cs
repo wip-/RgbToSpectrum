@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using WilCommon;
 
 namespace RgbToSpectrum
 {
     public class ColorSpectrumFilter : Filter
     {
-        public override double LambdaMin { get { return spectrum.LambdaMin; } }
-        public override double LambdaMax { get { return spectrum.LambdaMax; } }
-        public override double LambdaStep { get { return spectrum.LambdaStep; } }
+        public override double LambdaMin { get { return SimpleSpectrum.LambdaMin; } }
+        public override double LambdaMax { get { return SimpleSpectrum.LambdaMax; } }
+        public override double LambdaStep { get { return SimpleSpectrum.LambdaStep; } }
 
         SimpleSpectrum spectrum = new SimpleSpectrum(1.0, 1.0, 1.0);
         

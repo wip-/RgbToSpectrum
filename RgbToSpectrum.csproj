@@ -61,11 +61,12 @@
     <Compile Include="ConnectionViewModel.cs" />
     <Compile Include="Filters\ColorSpectrumFilter.cs" />
     <Compile Include="Filters\FixedFilter.cs" />
-    <Compile Include="FilteredSpectrum.cs" />
+    <Compile Include="Spectra\FilteredSpectrum.cs" />
     <Compile Include="Filters\Filter.cs" />
     <Compile Include="Filters\Identity.cs" />
-    <Compile Include="SimpleSpectrum.cs" />
-    <Compile Include="ComplexSpectrum.cs" />
+    <Compile Include="Spectra\SimpleSpectrum.cs" />
+    <Compile Include="Spectra\ComplexSpectrum.cs" />
+    <Compile Include="Utilities.cs" />
     <Compile Include="XYZColor.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -116,6 +117,7 @@
       <Name>WilCommon</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

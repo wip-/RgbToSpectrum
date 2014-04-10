@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using WilCommon;
 
@@ -18,9 +17,9 @@ namespace RgbToSpectrum
 
         public FilteredSpectrum(SimpleSpectrum inputSpectrum, Filter filter)
         {
-            LambdaMin  = Math.Max(inputSpectrum.LambdaMin , filter.LambdaMin );
-            LambdaMax  = Math.Min(inputSpectrum.LambdaMax , filter.LambdaMax );
-            LambdaStep = Math.Min(inputSpectrum.LambdaStep, filter.LambdaStep);
+            LambdaMin = Math.Max(SimpleSpectrum.LambdaMin, filter.LambdaMin);
+            LambdaMax = Math.Min(SimpleSpectrum.LambdaMax, filter.LambdaMax);
+            LambdaStep = Math.Min(SimpleSpectrum.LambdaStep, filter.LambdaStep);
 
             for (var l = LambdaMin; l <= LambdaMax; l += LambdaStep)
             {

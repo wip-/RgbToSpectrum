@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Linq;
-using System.Diagnostics;
-using System.Drawing;
-using WilCommon;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RgbToSpectrum
 {
